@@ -40,7 +40,8 @@ def DrawOneSquare(inputText):
     # position to center square on canvas 
     offset = (canvasSize - squareSize) // 2 
 
-    canvas.create_rectange(offset, offset, offset + squareSize, offset + squareSize , fill = colour, outline = colour)
+    # create rectangle on canvas 
+    canvas.create_rectangle(offset, offset, offset + squareSize, offset + squareSize , fill = colour, outline = colour)
 
 # Function to get input from text field then call DrawOneSquare with it
 def Draw():

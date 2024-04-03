@@ -1,4 +1,4 @@
-
+# Author: Blake Leahy
 # Notes:
 # Recursively generate squares of different colours depending on input
 # in all corners of the parent square. 

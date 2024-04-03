@@ -24,9 +24,68 @@
 
 # 2 layers of input read version   -   need recursive version next to read any number of input lines / square layers  
 
+# Next, the program must be edited to become recursive in order to process+draw an arbitrary number of lines 
+# drawLayer will recursively be called within drawLayer for each corner center co-ordinate
+# Keep track of depth which is increased on each new layer of squares to be drawn 
+# Function to draw first square then call resursive function at end to continue to next input lines 
 
 
 import tkinter as tk 
+
+# Recursive function called after first layer drawn 
+# base case: is depth >= number of input lines / squares to be drawn 
+# Calculates top left co-ords for square to be drawn from as a starting point based oof center and size variables
+# If more than 1 input line, parse next line, calculate size of squares in next layer based on current size from first square layer
+# Then calculates corners of curr square(s) to get where centers of next square layer will be. 
+# For each corner calculated, make recursive call to DrawLayer with the new input parameters for the next layer
+def DrawLayer(canvas, center, size, colour, lines, numLayers=0):
+
+    # base case 
+    if numLayers >= len(lines):
+        return 
+
+    #calculate square 
+    topLeftX = center[0] - size //2 
+    topLeftY = center[1] - size //2 
+    canvas.create_rectangle(topLeftX, topLeftY, topLeftX + size, topLeftY + size, fill=colour, outline=colour)
+
+    # new calculations to feed as inputs to recursive call to DrawLayer
+    if numLayers + 1 < len(lines):
+        scale, r, g, b = map(float, lines[numLayers + 1].split())
+        newColour = f'#{int(r):02x}{int(g):02x}{int(b):02x}'
+        newSize = size * scale         # next layer corners calculated based on current square 
+        cornerCenters = [
+            (topLeftX, topLeftY),  #Top Left
+            (topLeftX + size, topLeftY),  #Top Right
+            (topLeftX, topLeftY + size),  #Bottom Left
+            (topLeftX + size, topLeftY + size), #Bottom Right
+        ]
+        # draw new square layer in each co-ord of these centers 
+        for x,y in cornerCenters: 
+            newCenter = (x,y)
+            DrawLayer(canvas, newCenter, newSize, newColour, lines, numLayers+1)
+
+# Function to draw first square to base next line recursive calls off 
+def DrawSquares(inputText):
+
+    lines = inputText.strip().split('\n')
+    if not lines:
+        print("Input must be provided")
+        return 
+    
+    # setup canvas 
+    canvasSize = 1200 
+    baseScale = 0.2 #first square small relative to canvas 
+    canvas = tk.Canvas(root, width=canvasSize, height = canvasSize, bg = 'white')
+    canvas.pack() 
+
+    #draw first line and call recursive function
+    scale, r, g, b = map(float, lines[0].split())
+    colour = f'#{int(r):02x}{int(g):02x}{int(b):02x}'
+    initialSize = canvasSize*scale*baseScale  
+
+    DrawLayer(canvas, (canvasSize//2, canvasSize//2), initialSize, colour, lines)
+
 
 # Function to just draw one square on canvas 
 def DrawOneLayer(inputText):
@@ -99,7 +158,8 @@ def Draw():
     for widget in root.winfo_children():
         if isinstance(widget, tk.Canvas):
             widget.destroy()
-    DrawTwoLayers(inputText)
+    #DrawTwoLayers(inputText)
+    DrawSquares(inputText)
 # GUI setup 
 root = tk.Tk()
 root.title("Quilting Bee - Two layers")

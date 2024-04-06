@@ -70,6 +70,8 @@ root.title("Quilting Bee")
 
 # text input field
 inputField = tk.Text(root, height = 5, width = 30)
+inputField.insert('1.0', "1.0 255 0 0\n0.8 0 255 0\n0.1 0 0 255")  # Default example input.
+
 inputField.pack()
 
 # submit button to draw 

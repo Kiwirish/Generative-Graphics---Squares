@@ -5,7 +5,11 @@
 # Done by tracking the co-ords where each square is drawn, then the full canvas is redrawn at the total 
 # size of those coordinates. Each layer that's drawn, return coordinates of the size of that layer 
 
+
+
+
 import tkinter as tk 
+
 
 # Function to recursively draw layers after the first 
 def DrawLayer(canvas, center, size, colour, lines, numLayers=0, minX=float('inf'), minY=float('inf'), maxX=float('-inf'), maxY=float('-inf')):

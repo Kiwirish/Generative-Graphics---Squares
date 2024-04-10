@@ -1,13 +1,10 @@
 # Etude 4 
+The latest version of QuiltingBee is contained within QuiltingBeeNewApproach.py.
 
-My final working QuiltingBee program is within FinalQuiltingBee.py, which is a cleaned up version only containing code used in the final version. 
-
-QuiltingBee.py contains tests and attempts with less layers to aid in my understanding prior to the recursion for arbitrary numbers of layers. 
+Other files are previous versions with a different approach or missing bits. 
 
 ### To compile, run and test my program: 
 
- - Click 'run' in editor or enter the following into terminal: 
-      - *python3 FinalQuiltingBee.py*
+ - enter the following into terminal: 
+      - *python3 QuiltingBeeNewApproach.py* < input.txt 
         
-
- - Then enter input lines into GUI box pop-up. Click 'Draw' to submit your input lines. 

@@ -17,8 +17,6 @@
 # 
 #  DrawSquare function gets all points of last square to draw new square off and draws that, returning coords/positions of the corners of that new square 
 #  
-#   
-#
 # read input with 'with open(input.txt',r')' 
 # EstimateDimensions function to calculate total widthxheight to fit the final quilt using 'scale' in squares tuple list 
 #  -starting w a base size, for each layer after the first (squares[1:]), calculate how much more space is needed bc of that layers scale 
@@ -30,10 +28,22 @@
 # the next layer of squares. Then we loop over the square tuples holding scale r g b and 
 # for each corner of the first square and for each coordinate in each corner, draw a new square at that current corner,
 # append that to some storage for the current corners
+
 import tkinter as tk 
 import sys 
 
+# function to calculate the dimensions of the canvas from the scale inputs prior to drawing 
 def CalculateDimensions(inputTuples):
+
+    totalHeight = 10 
+    totalWidth = 10
+
+    for scale,_,_,_ in inputTuples[1:]:
+        scaledSize = scale * 100 
+        totalWidth += scaledSize * 2 
+        totalHeight += scaledSize * 2
+
+    return totalWidth, totalHeight 
 
 def DrawSquare(canvas, XCenter, YCenter, size, colour): 
 
@@ -51,7 +61,8 @@ def DrawSquare(canvas, XCenter, YCenter, size, colour):
 
 def main(): 
 
-    root = tk.TK()
+    #setup 
+    root = tk.Tk()
     root.title("Quilting Bee")
 
     with open('input.txt', 'r') as f:
@@ -62,25 +73,34 @@ def main():
     inputTuples = [(float(scale), int(r), int(g), int(b)) for scale, r, g, b in (line.split() for line in lines)]
 
     # calculate dinmensions 
-
+    totalWidth, totalHeight = CalculateDimensions(inputTuples)
     canvas = tk.Canvas(root, width = totalWidth, height = totalHeight, bg='white')
     canvas.pack()
 
+    # draw first square 
+    XCenter = totalWidth/2
+    YCenter = totalHeight/2
+    lastCorners = [DrawSquare(canvas, XCenter, YCenter, 100 * inputTuples[0][0], f'#{inputTuples[0][1]:02x}{inputTuples[0][2]:02x}{inputTuples[0][3]:02x}')]
+
     #loop over input lines starting from second as first will be drawn above 
     for scale, r, g, b in inputTuples[1:]:
+
         size = scale * 100 
-        color = f'#{int(r):02x}{int(g):02x}{int(b):02x}'
+        colour = f'#{int(r):02x}{int(g):02x}{int(b):02x}'
         currentCorners = [] 
+
         for corner in lastCorners:
             for coordinate in corner: 
+
                 XCenter, YCenter = coordinate
                 corners = DrawSquare(canvas, XCenter, YCenter, size, colour)
                 currentCorners.append(corners)
+
         lastCorners = currentCorners 
     
     root.mainloop()
 
-if __name__ == "_main_":
+if __name__ == "__main__":
     main()
 
 

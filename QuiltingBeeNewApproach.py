@@ -39,8 +39,8 @@ import sys
 # Function to calculate the scale factor based on dimensions quilt will occupy for fixed canvas size 
 def CalculateScaleFactor(inputTuples, canvasWidth, canvasHeight):
 
-    totalHeight = 10
-    totalWidth = 10
+    totalHeight = 25
+    totalWidth = 25
 
     for scale,_,_,_ in inputTuples[1:]:
         scaledSize = scale * 100
@@ -73,8 +73,8 @@ def main(inputText):
     root.title("Quilting Bee")
 
     # fixed canvas size rather than calculated based off quilt layers scales
-    canvasWidth = 600
-    canvasHeight = 600
+    canvasWidth = 800
+    canvasHeight = 800
 
     canvas = tk.Canvas(root, width = canvasWidth, height = canvasHeight, bg='white')
     canvas.pack()

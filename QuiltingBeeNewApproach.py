@@ -31,7 +31,9 @@
 # CalculateScaleFactor will scale each square drawn in the quilt to the FIXED CANVAS size instead 
 
 # ACTUALLY read from stdin, not just 'open' the input file 
-
+# 14 April version
+# ensure scale factor is within reasonable range - test different ranges.
+# if squares are smaller than 1 pixel then dont draw 
 
 import tkinter as tk 
 import sys 
@@ -49,11 +51,20 @@ def CalculateScaleFactor(inputTuples, canvasWidth, canvasHeight):
     
     widthScale = canvasWidth / totalWidth 
     heightScale = canvasHeight / totalHeight 
-    
-    return min(widthScale, heightScale) 
+    scaleFactor = min(widthScale, heightScale)
+
+    # make sure scale factor is within reasonable range 
+    minScale = 0.1 
+    maxScale = 4.0 
+    scaleFactor = max(minScale, min(maxScale, scaleFactor))
+    return scaleFactor 
 
 def DrawSquare(canvas, XCenter, YCenter, size, colour): 
 
+    # skip drawing squares smaller than 1pixel
+    if size < 1: 
+        return []
+    
     topLeftX = XCenter - size /2
     topLeftY = YCenter - size /2
 

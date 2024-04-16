@@ -35,6 +35,11 @@
 # ensure scale factor is within reasonable range - test different ranges.
 # if squares are smaller than 1 pixel then dont draw 
 
+# 16 April version 
+# successfully scaling up but not scaling down. For small inputs, it scales it up well. 
+# But for large inputs, it doesn’t scale it down, its just a huge zoomed in quilt. 
+# new scaling function 
+
 import tkinter as tk 
 import sys 
 
@@ -43,21 +48,38 @@ def CalculateScaleFactor(inputTuples, canvasWidth, canvasHeight):
 
     totalHeight = 25
     totalWidth = 25
+    # storing largest scale number 
 
+    # divide each scale by max scale 
     for scale,_,_,_ in inputTuples[1:]:
         scaledSize = scale * 100
         totalWidth += scaledSize * 2
         totalHeight += scaledSize * 2
-    
+
+
     widthScale = canvasWidth / totalWidth 
     heightScale = canvasHeight / totalHeight 
     scaleFactor = min(widthScale, heightScale)
 
     # make sure scale factor is within reasonable range 
-    minScale = 0.1 
-    maxScale = 4.0 
+    minScale = 0.00001 
+    maxScale = 10000.0 
     scaleFactor = max(minScale, min(maxScale, scaleFactor))
     return scaleFactor 
+
+# Scale 
+def CalculateProportionalScaleFactor(inputTuples, canvasWidth, canvasHeight):
+
+    initialSize = 100
+    maxDimension = initialSize * inputTuples[0][0]
+    
+    additiveDimension = maxDimension
+
+    for scale, _, _, _ in inputTuples[1:]:
+        additiveDimension += initialSize * scale 
+    
+    scaleFactor = min(canvasWidth / additiveDimension, canvasHeight / additiveDimension)
+    return scaleFactor
 
 def DrawSquare(canvas, XCenter, YCenter, size, colour): 
 
@@ -93,25 +115,30 @@ def main(inputText):
     lines = inputText.strip().split('\n')
     inputTuples = [(float(scale), int(r), int(g), int(b)) for scale, r, g, b in (line.split() for line in lines)]
 
-    newScale = CalculateScaleFactor(inputTuples, canvasWidth, canvasHeight)
+    newScale = CalculateProportionalScaleFactor(inputTuples, canvasWidth, canvasHeight)
 
     # draw first square 
     XCenter = canvasWidth/2
     YCenter = canvasHeight/2
-    lastCorners = DrawSquare(canvas, XCenter, YCenter, 100 * inputTuples[0][0] * newScale, f'#{inputTuples[0][1]:02x}{inputTuples[0][2]:02x}{inputTuples[0][3]:02x}')
+
+    firstScale, r, g, b = inputTuples[0]
+    firstSize = firstScale * newScale * 100 
+    firstColour = f'#{r:02x}{g:02x}{b:02x}'
+
+    lastCorners = [DrawSquare(canvas, XCenter, YCenter, firstSize, firstColour)]
 
     #loop over input lines starting from second as first will be drawn above 
     for scale, r, g, b in inputTuples[1:]:
 
         currentCorners = [] 
 
-        for corner in lastCorners:
+        for corners in lastCorners:
+            for (XCenter, YCenter) in corners:
 
-            XCenter, YCenter = corner
-            colour = f'#{r:02x}{g:02x}{b:02x}'
-            size = scale * newScale * 100
-            corners = DrawSquare(canvas, XCenter, YCenter, size, colour)
-            currentCorners.extend(corners)
+                size = scale * newScale * 100
+                colour = f'#{r:02x}{g:02x}{b:02x}'
+                corners = DrawSquare(canvas, XCenter, YCenter, size, colour)
+                currentCorners.append(corners)
 
         lastCorners = currentCorners
 

@@ -40,6 +40,8 @@
 # But for large inputs, it doesn’t scale it down, its just a huge zoomed in quilt. 
 # new scaling function 
 
+# 17 April version 
+
 import tkinter as tk 
 import sys 
 
@@ -83,17 +85,15 @@ def CalculateProportionalScaleFactor(inputTuples, canvasWidth, canvasHeight):
 
 def DrawSquare(canvas, XCenter, YCenter, size, colour): 
 
-    # skip drawing squares smaller than 1pixel
-    if size < 1: 
-        return []
-    
     topLeftX = XCenter - size /2
     topLeftY = YCenter - size /2
 
     bottomRightX = XCenter + size /2
     bottomRightY = YCenter + size /2
-
-    canvas.create_rectangle(topLeftX, topLeftY, bottomRightX, bottomRightY, fill=colour, outline=colour)
+    
+    # only draw if greater than 1 pixel
+    if size > 1:
+        canvas.create_rectangle(topLeftX, topLeftY, bottomRightX, bottomRightY, fill=colour, outline=colour)
 
     corners = [(topLeftX, topLeftY), (bottomRightX, topLeftY), (topLeftX, bottomRightY), (bottomRightX, bottomRightY)]
     return corners
